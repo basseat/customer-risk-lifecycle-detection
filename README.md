@@ -24,6 +24,7 @@ The network-link detection is built around **shared onboarding device**, a well-
 
 | File | What it does |
 |---|---|
+| [`TAXONOMY.md`](./TAXONOMY.md) | The design document: the full event schema this pipeline is built against, and the German/EU risk classification framework (GwG, BaFin) behind it |
 | `generate_data.py` | Generates 5,000 synthetic accounts and ~420k transactions, with a deliberately seeded 18-account structuring/mule cluster hidden inside the lower-risk population, used as ground truth to validate detection |
 | `detection_queries.sql` | Four PostgreSQL views: rolling 7-day inflow velocity (window functions), time-to-outflow (self-join), shared-counterparty and shared-device network links (self-joins), and a combined weighted structuring-likelihood score |
 | `run_detection.py` | Loads the queries, runs them against PostgreSQL, and checks recall/precision against the seeded ground truth |

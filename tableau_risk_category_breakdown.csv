@@ -1,0 +1,5 @@
+risk_category,count,group
+lower_risk_sdd,33,Flagged (top 33 by RF score)
+normal_risk_cdd,3755,All accounts
+lower_risk_sdd,752,All accounts
+higher_risk_edd,493,All accounts

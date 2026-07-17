@@ -21,5 +21,74 @@
         "precision_at_k": 0.909
       }
     }
+  },
+  {
+    "run_timestamp": "2026-07-17T19:40:26.303183+00:00",
+    "feature_set_hash": "d0e6ad681871",
+    "feature_count": 11,
+    "dataset_size": 5000,
+    "positive_count": 33,
+    "seeds": {
+      "generate_data.py": 42,
+      "add_near_miss_cases.py": 99,
+      "ml_detection.py (RandomForestClassifier, StratifiedKFold)": 42,
+      "ml_detection.py (IsolationForest)": 42
+    },
+    "models": {
+      "random_forest": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 1.0
+      },
+      "isolation_forest": {
+        "recall_at_k": 0.909,
+        "precision_at_k": 0.909
+      }
+    }
+  },
+  {
+    "run_timestamp": "2026-07-17T19:47:34.157530+00:00",
+    "feature_set_hash": "d0e6ad681871",
+    "feature_count": 11,
+    "dataset_size": 5000,
+    "positive_count": 33,
+    "seeds": {
+      "generate_data.py": 42,
+      "add_near_miss_cases.py": 99,
+      "ml_detection.py (RandomForestClassifier, StratifiedKFold)": 42,
+      "ml_detection.py (IsolationForest)": 42
+    },
+    "models": {
+      "random_forest": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 1.0
+      },
+      "isolation_forest": {
+        "recall_at_k": 0.909,
+        "precision_at_k": 0.909
+      }
+    }
+  },
+  {
+    "run_timestamp": "2026-07-17T19:57:00.649293+00:00",
+    "feature_set_hash": "d0e6ad681871",
+    "feature_count": 11,
+    "dataset_size": 5000,
+    "positive_count": 33,
+    "seeds": {
+      "generate_data.py": 42,
+      "add_near_miss_cases.py": 99,
+      "ml_detection.py (RandomForestClassifier, StratifiedKFold)": 42,
+      "ml_detection.py (IsolationForest)": 42
+    },
+    "models": {
+      "random_forest": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 1.0
+      },
+      "isolation_forest": {
+        "recall_at_k": 0.909,
+        "precision_at_k": 0.909
+      }
+    }
   }
 ]

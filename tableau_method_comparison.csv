@@ -1,0 +1,10 @@
+method,cluster_type,recall
+Supervised Random Forest,Obvious cluster,1.0
+Supervised Random Forest,Near-miss cluster,1.0
+Supervised Random Forest,Overall,1.0
+Unsupervised Isolation Forest,Obvious cluster,1.0
+Unsupervised Isolation Forest,Near-miss cluster,0.8
+Unsupervised Isolation Forest,Overall,0.9090909090909091
+Rules-based SQL,Obvious cluster,1.0
+Rules-based SQL,Near-miss cluster,0.0
+Rules-based SQL,Overall,0.5454545454545454

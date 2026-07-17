@@ -88,26 +88,10 @@ print("Model registry entry logged:")
 print(json.dumps(registry_entry, indent=2))
 
 # ------------------------------------------------------------------
-# 3. MATCHING REVIEW CADENCE TO ACTUAL REGULATORY OBLIGATIONS
+# 3. NEXT REVIEW DUE, computed from the GwG-mandated cadence
+#    (annual for higher-risk-influencing models, see README for the
+#    reasoning behind this cadence).
 # ------------------------------------------------------------------
-print("""
-Review cadence notes (tied to the actual GwG obligations, not a generic best-practice checklist):
-
-- Model retraining/review cadence should align with the GwG-mandated
-  risk-category review cycles this project's schema is built on:
-  higher-risk accounts reviewed at least annually, normal-risk at least
-  every 5 years. A detection model influencing risk classification
-  should be reviewed at least as often as the riskiest category it
-  affects, i.e. at minimum annually.
-- A SAR filing automatically triggers a 21-day (ML) or 6-month (TF)
-  heightened-risk window under current BaFin guidance. Any model whose
-  output could contribute to a SAR decision needs its scoring logic
-  and feature set to be documented and reproducible for that period,
-  in case of regulatory review, which is exactly what the seed logging
-  and feature-hash logging above are for.
-- Feature importance transparency (see false_positive_analysis.py)
-  matters beyond model quality, it's what lets an analyst explain to
-  an investigator, or eventually a regulator, WHY an account was
-  flagged, not just that it was. A model that can't explain its own
-  top features is a harder model to defend under audit.
-""")
+from datetime import timedelta
+next_review_due = (datetime.now(timezone.utc) + timedelta(days=365)).date().isoformat()
+print(f"\nNext review due: {next_review_due} (annual cadence, matches GwG higher-risk review cycle)")

@@ -1,0 +1,12 @@
+feature,importance
+device_link_count,0.2452583840442456
+avg_hours_to_outflow,0.24411298853348729
+fast_pairs,0.18062432140759627
+max_7d_inflow_count,0.13454670399041713
+total_inflows,0.11734662262430381
+total_inflow_amount,0.04107926034225768
+is_lower_risk,0.022738646706189587
+kyc_documentation_completeness,0.010091647623423482
+avg_7d_inflow_amount,0.0026242342321410005
+high_risk_country_share,0.0015771760554590172
+counterparty_link_count,1.4440479235070585e-08

@@ -3,6 +3,7 @@
 # Run once, from the folder containing accounts.csv and transactions.csv.
 set -e
 
+dropdb --if-exists crl_risk_lifecycle
 createdb crl_risk_lifecycle
 
 psql -d crl_risk_lifecycle -c "
@@ -22,7 +23,8 @@ CREATE TABLE transactions (
     counterparty_id TEXT,
     counterparty_country TEXT,
     channel TEXT,
-    timestamp TIMESTAMP
+    timestamp TIMESTAMP,
+    jurisdiction_risk TEXT
 );
 "
 

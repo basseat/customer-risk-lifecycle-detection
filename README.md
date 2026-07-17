@@ -26,13 +26,30 @@ The network-link detection is built around **shared onboarding device**, a well-
 |---|---|
 | [`TAXONOMY.md`](./TAXONOMY.md) | The design document: the full event schema this pipeline is built against, and the German/EU risk classification framework (GwG, BaFin) behind it |
 | `generate_data.py` | Generates 5,000 synthetic accounts and ~420k transactions, with a deliberately seeded 18-account structuring/mule cluster hidden inside the lower-risk population, used as ground truth to validate detection |
+| `add_near_miss_cases.py` | Adds a second, harder 15-account cluster with noisier, less obvious structuring behaviour (wider amount variance, slower pass-through, weaker device overlap), plus a jurisdiction-risk feature, so rules-based and ML detection can be compared on a genuinely differentiated test rather than an easy one |
+| `build_features.py` | Converts the same signals the SQL pipeline detects (velocity, pass-through, network links, jurisdiction risk) into a per-account feature table for machine learning |
+| `ml_detection.py` | Supervised (Random Forest, class-weighted) and unsupervised (Isolation Forest) detection, compared against each other and against the rules-based baseline |
+| `false_positive_analysis.py` | Examines which non-positive accounts the model ranks highest and why, feature importances, and an honest read of how large the true separation actually is |
+| `model_governance.py` | Whether results can be re-run and verified later (seed logging), whether performance is tracked over time rather than known only at a single point (a versioned model registry log), and whether review cadence actually matches the GwG risk-review cycles the underlying categories carry |
 | `detection_queries.sql` | Four PostgreSQL views: rolling 7-day inflow velocity (window functions), time-to-outflow (self-join), shared-counterparty and shared-device network links (self-joins), and a combined weighted structuring-likelihood score |
 | `run_detection.py` | Loads the queries, runs them against PostgreSQL, and checks recall/precision against the seeded ground truth |
 | `setup_database.sh` | One-shot script to create the database, tables, and load the generated CSVs |
 
-## Result
+## Results
 
-Running detection against the seeded cluster: **100% recall, 90% precision** in the top-20 ranked accounts. Every seeded structuring/mule account was correctly surfaced and ranked at the very top, all correctly identified in the lower-risk category, the segment structurally most exposed to this kind of exploitation since it receives lighter monitoring by design.
+**Rules-based SQL detection**, against the original, more obvious 18-account cluster: **100% recall, 90% precision** in the top-20.
+
+**Against a harder, combined test** (the original 18-account cluster plus a second, deliberately noisier 15-account near-miss cluster designed to fall outside fixed thresholds), the three approaches diverge in a genuinely informative way:
+
+| Method | Overall recall | Obvious cluster | Near-miss cluster |
+|---|---|---|---|
+| Rules-based SQL | 55% | 100% | 0% |
+| Supervised Random Forest | 100% | 100% | 100% |
+| Unsupervised Isolation Forest | 91% | 100% | 80% |
+
+The takeaway: rules-based detection is excellent at known patterns and blind to anything that falls outside a fixed threshold. Supervised ML, trained on labels, generalises past that limitation. Unsupervised anomaly detection, which never sees a single label, still catches most of the harder cases purely from behavioural deviation, the more realistic scenario for catching a typology nobody has confirmed yet.
+
+A false-positive analysis (`false_positive_analysis.py`) found the gap between true positives and the next-highest-ranked accounts is large on this synthetic dataset, an honest limitation: synthetic data this clean validates that detection logic *works*, but can't validate how any method behaves at a genuinely ambiguous decision boundary, which only real historical alert data with real investigator dispositions can do. Feature importance analysis is still useful regardless: device and pass-through-speed signals dominate over raw transaction volume.
 
 ## How to run it
 
@@ -41,8 +58,13 @@ Requires PostgreSQL and Python 3.
 ```bash
 pip install -r requirements.txt
 python generate_data.py          # generates accounts.csv, transactions.csv, seeded_cluster_ground_truth.csv
+python add_near_miss_cases.py    # adds the harder near-miss cluster and jurisdiction risk
 ./setup_database.sh              # creates the database and loads the CSVs
-python run_detection.py          # runs detection, prints the ranked results and recall/precision
+python run_detection.py          # rules-based SQL detection, prints ranked results and recall/precision
+python build_features.py         # builds the ML feature table
+python ml_detection.py           # supervised + unsupervised detection, compared to the rules-based baseline
+python false_positive_analysis.py  # examines the model's highest-ranked non-positive accounts
+python model_governance.py       # logs a versioned registry entry, prints notes on review-cadence alignment
 ```
 
 ## A note on the synthetic data

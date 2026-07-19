@@ -35,6 +35,10 @@ The network-link detection is built around **shared onboarding device**, a well-
 | `run_detection.py` | Loads the queries, runs them against PostgreSQL, and checks recall/precision against the seeded ground truth |
 | `setup_database.sh` | One-shot script to create the database, tables, and load the generated CSVs |
 
+## Review cadence
+
+`model_governance.py` computes the next review-due date on an annual cadence. The reasoning: GwG mandates at-minimum-annual review for higher-risk accounts, and a model influencing risk classification should be reviewed at least as often as the riskiest category it affects. A SAR filing also triggers a 21-day (money laundering) or 6-month (terrorist financing) heightened-risk window under current BaFin guidance, which is why every run logs its seeds and feature set, so results are reproducible if a model's output is ever reviewed after the fact.
+
 ## Results
 
 **Rules-based SQL detection**, against the original, more obvious 18-account cluster: **100% recall, 90% precision** in the top-20.
@@ -51,6 +55,12 @@ The takeaway: rules-based detection is excellent at known patterns and blind to 
 
 A false-positive analysis (`false_positive_analysis.py`) found the gap between true positives and the next-highest-ranked accounts is large on this synthetic dataset, an honest limitation: synthetic data this clean validates that detection logic *works*, but can't validate how any method behaves at a genuinely ambiguous decision boundary, which only real historical alert data with real investigator dispositions can do. Feature importance analysis is still useful regardless: device and pass-through-speed signals dominate over raw transaction volume.
 
+## Interactive dashboard
+
+Published to Tableau Public: [Rules-Based vs. ML Detection: Recall Comparison](https://public.tableau.com/app/profile/abdulbasit.ayoade/viz/CustomerRiskLifecycle/RecallComparison)
+
+Two dashboards: the headline recall comparison (interactive, click a method to drill into its obvious vs. near-miss breakdown), and a second covering what drives the model and where flagged accounts concentrate by risk category.
+
 ## How to run it
 
 Requires PostgreSQL and Python 3.
@@ -64,7 +74,7 @@ python run_detection.py          # rules-based SQL detection, prints ranked resu
 python build_features.py         # builds the ML feature table
 python ml_detection.py           # supervised + unsupervised detection, compared to the rules-based baseline
 python false_positive_analysis.py  # examines the model's highest-ranked non-positive accounts
-python model_governance.py       # logs a versioned registry entry, prints notes on review-cadence alignment
+python model_governance.py       # logs a versioned registry entry, computes the next review-due date
 ```
 
 ## A note on the synthetic data
